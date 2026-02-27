@@ -98,7 +98,8 @@
             <th>Estación Base</th>
             <th>Nemónico</th>
             <th>Zona o Edificio</th>
-            <th>Distancia </th>
+            <th>Distancia</th>
+            <th>Puerto Equipo</th>
           </tr>
         </thead>
         <tbody id="tableBody">
@@ -109,10 +110,33 @@
 
   <script>
     // === DATOS PROCESADOS (sin duplicados) ===
-    const rawData =[
+    const rawData = [
 ["RIBBON-BANDEJA1-1","CAR.PARAISO","PACTDK","SAN SEBASTIAN 06","SIN INFORMACION"],
 ["CAJA OB","CAR.MAMONAL 5","ENLACE BTS","ARGOS CANTERA","11902"],
 ["ODF 1 H5","CAR.CEMENTERIO","ENLACE BTS","CAR.OLAYA","9861"],
+["ODF-2C-A2_A3","SDS BOSQUE","ENLACE TRONCAL","BOSQUE_TURBACO_TTI9716","22651","PUERTO"],
+["ODF-1D-D2_D3","SDS BOSQUE","ENLACE TRONCAL","BOSQUE_TURBACO_UPB8090","SIN INFORMACION","PUERTO"],
+["ODF-3B-A1_TX-A2_RX","SDS BOSQUE","CAR.CORREDOR DE CARGA","CAR.MAMONAL1","SIN INFORMACION"],
+["ODF-3B-A3","SDS BOSQUE","ENLACE BTS","COMCEL CAR. AZEMBLA","12399","PUERTO"],
+["ODF-3B-A4","SDS BOSQUE","ENLACE BTS","CCOMCEL CAR. AZEMBLA","12391","PUERTO"],
+["ODF-3B-A5","SDS BOSQUE","ENLACE CLIIENTE","ALVARADO Y DURIN","9917","PUERTO"],
+["ODF-3B-A6","SDS BOSQUE","ENLACE CLIIENTE","G.M.P. INGENIEROS S.A.S.","17321",""],
+["ODF-3B-A7","SDS BOSQUE","ENLACE CLIIENTE","BANCOLOMBIA ABOCOL","19500","PUERTO"],
+["ODF-3B-A8","SDS BOSQUE","ENLACE CLIIENTE","COMERCIALIZADORA DE HIELO S.A.","1145",""],
+["ODF-3B-A9","SDS BOSQUE","ENLACE TRONCAL","BTS DIAMANTE 2.","6863",""],
+["ODF-3B-A10","SDS BOSQUE","ENLACE CLIENTE","BANCO DAVIVIENDA S.A.","7689",""],
+["ODF-3B-A11","SDS BOSQUE","ENLACE ","TX","",""],
+["ODF-3B-A12","SDS BOSQUE","ENLACE CLIENTE","FLETEX S.A. ","1019",""],
+["ODF-3B-B1","SDS BOSQUE","ENLACE CLIENTE","g&g ","",""],
+["ODF-3B-B2","SDS BOSQUE","ENLACE CLIENTE","CELY NIÑO GUILLERMO ","1033",""],
+["ODF-3B-B3","SDS BOSQUE","ENLACE CLIENTE","ath a toda hora 1874","",""],
+["ODF-3B-B4","SDS BOSQUE","ENLACE CLIENTE","MELTEC S.A.","7796",""],
+["ODF-3B-B5","SDS BOSQUE","ENLACE CLIENTE","SERVIPARAMO","7998",""],
+["ODF-3B-B6","SDS BOSQUE","ENLACE CLIENTE","LOGISTICA PASAR S.A.","8064",""],
+["ODF-3B-B7","SDS BOSQUE","ENLACE CLIENTE","SERVICIO NACIONAL DE APRENDIZAJE","10274",""],
+["ODF-3B-B8","SDS BOSQUE","ENLACE CLIENTE","FABCOM","8132",""],
+["ODF-3B-B9","SDS BOSQUE","ENLACE CLIENTE","NESTOR VALENZUELA SARAVIA COLOMBIANA LIMITADA NEVASA COLOMBI","7930",""],
+["ODF-3B-B10","SDS BOSQUE","ENLACE CLIENTE","AT&T GLOBAL NETWORK SERVICES COLOMBIA LTDA","17128",""],
 ["ODF-1B-C3","SDS BOSQUE ","ENLACE BTS","CAR.VILLA OLIMPICA P3","4607"],
 ["RIB-B1-2","CAR.PARAISO","PACTDL","SAN SEBASTIAN 07","SIN INFORMACION"],
 ["RIB-B1-3","CAR.PARAISO","PACTDM","SAN SEBASTIAN 08","67464"],
@@ -1452,7 +1476,8 @@
 ["BOL.TURBACO-1","TUTB97","PRADO VERDE 07","SIN INFORMACION"],
 ["BOL.TURBACO-1","TURPR1","TURPR1","RAD"],
 ["BOL.TURBACO-1","TURPR2","TURPR2","SAT"],
-["BOL.TURBACO-1","TURPR3","TURPR3","TER"]
+["BOL.TURBACO-1","TURPR3","TURPR3","TER"],
+["BOL.TURBACO-1","TURPR3","TURPR3","TER","SIN INFORMACION","SIN INFORMACION"],
     ];
 
     const tbody = document.getElementById('tableBody');
@@ -1460,24 +1485,32 @@
     const resultsContainer = document.getElementById('results');
 
     function renderTable(rows = []) {
-      if (rows.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="no-results">No se encontraron resultados.</td></tr>`;
-        resultsContainer.style.display = 'block';
-        return;
-      }
+  if (rows.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" class="no-results">No se encontraron resultados.</td></tr>`;
+    resultsContainer.style.display = 'block';
+    return;
+  }
 
-      tbody.innerHTML = rows.map(row => `
-        <tr>
-          <td>${escapeHTML(row[0])}</td>
-          <td>${escapeHTML(row[1])}</td>
-          <td>${escapeHTML(row[2])}</td>
-          <td>${escapeHTML(row[3])}</td>
-          <td>${escapeHTML(row[4])}</td>
-        </tr>
-      `).join('');
+  tbody.innerHTML = rows.map(row => {
 
-      resultsContainer.style.display = 'block';
-    }
+    const puertoEquipo = row[5] && row[5].trim() !== ""
+      ? row[5]
+      : "NO ASIGNADO";
+
+    return `
+      <tr>
+        <td>${escapeHTML(row[0] || "")}</td>
+        <td>${escapeHTML(row[1] || "")}</td>
+        <td>${escapeHTML(row[2] || "")}</td>
+        <td>${escapeHTML(row[3] || "")}</td>
+        <td>${escapeHTML(row[4] || "")}</td>
+        <td>${escapeHTML(puertoEquipo)}</td>
+      </tr>
+    `;
+  }).join('');
+
+  resultsContainer.style.display = 'block';
+}
 
     function escapeHTML(str) {
       if (str == null) return '';
